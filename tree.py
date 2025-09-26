@@ -12,14 +12,15 @@ class Node:
 
   def search(self, target):
     if self.data == target:
-      print("Found it!")
       return self
     if self.left and self.data > target:
       return self.left.search(target)
     if self.right and self.data < target:
       return self.right.search(target)
-    print("Value is not in tree")
-  
+    # print("Value is not in tree")
+    return None
+
+  # these methods are just recursing left/right. They would be useful if they visited/printed/returned the current node.
   def traversePreorder(self):
     if self.left:
       self.left.traversePreorder()
@@ -36,6 +37,12 @@ class Node:
     if self.right:
       self.right.traversePostorder()
   
+  """
+  Height as number of levels (nodes):
+      Leaf node = height 1.  Path length from root to deepest leaf counting nodes.  --> add +1 to the max(left,right).
+  Height as maximum edge count:
+      Leaf node = height 0.  Path length from root to deepest leaf counting edges. 
+  """
   def height(self, h=0):
     leftHeight = self.left.height(h+1) if self.left else h
     rightHeight = self.right.height(h+1) if self.right else h
@@ -57,7 +64,7 @@ class Tree:
     self.name = name
   def search(self, target):
     return self.root.search(target)
-  def traversePreeorder(self):
+  def traversePreorder(self):
     self.root.traversePreorder()
   def traverseInorder(self):
     self.root.traverseInorder()
@@ -69,7 +76,7 @@ class Tree:
     return self.root.getNodesAtDepth(depth)
   
   def _nodeToChar(self, h, spacing):
-    if n in None:
+    if n is None:
       return '_'+(' '*spacing)
     spacing = spacing-len(str(n))+1
     return str(n)+(' '*spacing)
