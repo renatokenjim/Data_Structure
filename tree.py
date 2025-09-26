@@ -35,12 +35,21 @@ class Node:
       self.left.traversePostorder()
     if self.right:
       self.right.traversePostorder()
+  
   def height(self, h=0):
     leftHeight = self.left.height(h+1) if self.left else h
     rightHeight = self.right.height(h+1) if self.right else h
     return max(leftHeight, rightHeight)
-    
 
+  def getNodesAtDepth(self, depth, nodes=[]):
+    if depth==0:
+      nodes.append(self.data)
+      return nodes
+    if self.left:
+      self.left.getNodesAtDepth(depth-1, nodes)
+    if self.right:
+      self.right.getNodesAtDepth(depth-1, nodes)
+    return nodes
 
 class Tree:
   def __init__(self, root, name=''):
@@ -55,8 +64,33 @@ class Tree:
   def traversePostorder(self):
     self.root.traversePostorder()
   def height(self):
-    return self.roott.height()
+    return self.root.height()
+  def getNodesAtDepth(self, depth):
+    return self.root.getNodesAtDepth(depth)
+  
+  def _nodeToChar(self, h, spacing):
+    if n in None:
+      return '_'+(' '*spacing)
+    spacing = spacing-len(str(n))+1
+    return str(n)+(' '*spacing)
     
+  def print(self, label=''):
+    print(self.name+''+label)
+    height = self.root.height()
+    spacing = 3
+    width = int((2*height-1) * (spacing+1) +1)    # amount of spaces
+    # Root offset
+    offset = int((width-1)/2)
+    for depth in range(0, height+1):
+      if depth > 0:
+        # print directional lines
+        print(' '*(offset+1) + (' '*(spacing+2)).join(['/' + (' '*(spacing-2)) + '\\']*(2**(depth-1))))
+      row = self.root.getNodesAtDepth(depth, [])
+      print((' '*offset) + ''.join([self._nodeToChar(n, spacing) for n in row]))
+      spacing = offset+1
+      offset = int(offset/2) -1
+    print('')
+        
 
 node = Node(10)
 node.left = Node(5)
