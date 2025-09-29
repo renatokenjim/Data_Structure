@@ -10,6 +10,7 @@ class Node:
     self.left = None
     self.right = None
 
+  # Binary Search Tree seach: returns the node or None
   def search(self, target):
     if self.data == target:
       return self
@@ -19,6 +20,50 @@ class Node:
       return self.right.search(target)
     # print("Value is not in tree")
     return None
+
+  def add(self, data):
+    if self.data == data:
+      return self
+    if data < self.data:
+      if self.left is None:
+        self.left = Node(data)
+      else:
+        self.left.add(data)
+    if data > self.data:
+      if self.right is None:
+        self.right - Node(data)
+      else:
+        self.right.add(data)
+  
+  def findMin(self):
+    if self.left:
+      return self.left.findMin()
+    return self.data
+      
+  def delete(self,target):
+    if self.data == target:
+      if self.left and self.right:      # if one of either exists
+        # RTFM
+        minValue = self.right.findMin()
+        self.data = minValue
+        self.right = self.right.delete(minValue)
+        return self
+      else:
+        return self.left or self.right
+    if self.right and target > self.data:
+      self.right = self.right.delete(target)
+    if self.left and target < self.data:
+      self.left = self.left.delete(target)
+  
+  def isBalanced(self):
+    leftHeight = self.left.height()+1 if self.left else 0
+    rightHeight = self.right.height()+1 if self.right else 0
+    return abs(leftHeight - rightHeight) < 2
+  def toStr(self):
+    if not self.isBalanced():
+      return str(self.data)+'*'
+    return str(self.data)
+    
 
   # these methods are just recursing left/right. They would be useful if they visited/printed/returned the current node.
   def traversePreorder(self):
@@ -54,9 +99,15 @@ class Node:
       return nodes
     if self.left:
       self.left.getNodesAtDepth(depth-1, nodes)
+    else:
+      left_list = [None] * (2 ** (depth - 1))
     if self.right:
       self.right.getNodesAtDepth(depth-1, nodes)
+    else: right_list = [None] * (2 ** (depth - 1))
     return nodes
+
+
+#===================================================================
 
 class Tree:
   def __init__(self, root, name=''):
@@ -64,6 +115,8 @@ class Tree:
     self.name = name
   def search(self, target):
     return self.root.search(target)
+  def add(self, data):
+    self.root.add(data)
   def traversePreorder(self):
     self.root.traversePreorder()
   def traverseInorder(self):
@@ -78,8 +131,8 @@ class Tree:
   def _nodeToChar(self, h, spacing):
     if n is None:
       return '_'+(' '*spacing)
-    spacing = spacing-len(str(n))+1
-    return str(n)+(' '*spacing)
+    spacing = spacing-len(n.toStr())+1
+    return n.toStr()+(' '*spacing)
     
   def print(self, label=''):
     print(self.name+''+label)
@@ -97,7 +150,10 @@ class Tree:
       spacing = offset+1
       offset = int(offset/2) -1
     print('')
-        
+  
+  def delete(self,target):
+    self.root = self.root.delete(target)    # return the new node put in place
+  
 
 node = Node(10)
 node.left = Node(5)
